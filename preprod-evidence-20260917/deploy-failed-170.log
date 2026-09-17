@@ -1,0 +1,53 @@
+
+> gyotak-purchase-v2@1.0.0 deploy:preprod
+> NODE_OPTIONS='--max-old-space-size=8192' npm run preprod -- deploy --initial-owner 20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be
+
+
+> gyotak-purchase-v2@1.0.0 preprod
+> PATH=/home/takuya/.local/node22/bin:$PATH NODE_OPTIONS='--max-old-space-size=8192' node --no-warnings --experimental-specifier-resolution=node --loader ts-node/esm src/preprod.ts deploy --initial-owner 20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be
+
+
+[wallet] Restoring saved state from /home/takuya/midnight/gyotak-purchase-v2/midnight-level-db/preprod
+  ✓ Building wallet
+
+──────────────────────────────────────────────────────────────
+  Wallet Overview                            Network: preprod
+──────────────────────────────────────────────────────────────
+  Unshielded Address (send tNight here):
+  mn_addr_preprod156r935l92s4r6ze2k4nffn0k5en25jqprhg9x3xl3lm0ltkaam8q4py66s
+──────────────────────────────────────────────────────────────
+
+[deploy] Starting wallet sync (no spinner wrap)...
+[deploy] Sync complete in 4.2s after 59 emissions
+[17:21:56.188] INFO (39243): wallet state persisted
+    dir: "/home/takuya/midnight/gyotak-purchase-v2/midnight-level-db/preprod"
+
+──────────────────────────────────────────────────────────────
+  Wallet Overview                            Network: preprod
+──────────────────────────────────────────────────────────────
+
+  Shielded (ZSwap)
+  └─ Address: mn_shield-addr_preprod1c8yf4dmy47pshyznhx4gtp89grzsqkg89etx58pnwftwcms9gapaglvjjvtkcy49sj5kc65qx5vsrmsw7fqd6aealz3gkeg2kzqfqes2xkw2n
+
+  Unshielded
+  ├─ Address: mn_addr_preprod156r935l92s4r6ze2k4nffn0k5en25jqprhg9x3xl3lm0ltkaam8q4py66s
+  └─ Balance: 1,000,000,000 tNight
+
+  Dust
+  └─ Address: mn_dust_preprod1wd6rgfyh77awlww7rs2cufcun5uwpjvfcd2jhs3dqx2k42msxrlhzqa9l3l
+
+──────────────────────────────────────────────────────────────
+    DUST present: 5,000,000,000,000,000,000 (1 coins)
+
+  ✓ Dust tokens already available (5,000,000,000,000,000,000 DUST)
+  ✓ Configuring providers
+[17:21:56.222] INFO (39243): Deploying gyotak-purchase contract...
+    initialOwner: "20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be"
+2026-09-17 17:21:56        RPC-CORE: subscribeRuntimeVersion(): RuntimeVersion:: disconnected from wss://rpc.preprod.midnight.network/: 1000:: Normal Closure
+2026-09-17 17:22:02        RPC-CORE: submitAndWatchExtrinsic(extrinsic: Extrinsic): ExtrinsicStatus:: 1010: Invalid Transaction: Custom error: 170
+  ✗ Deploying contract
+[17:22:04.086] INFO (39243): wallet state persisted
+    dir: "/home/takuya/midnight/gyotak-purchase-v2/midnight-level-db/preprod"
+[17:22:04.114] ERROR (39243): Command failed.
+    stack: "SubmissionError: Transaction submission error\n    at file:///home/takuya/midnight/gyotak-catch-v3/node_modules/@midnight-ntwrk/wallet-sdk-capabilities/dist/submission/submissionService.js:31:279\n    at file:///home/takuya/midnight/gyotak-catch-v3/node_modules/effect/dist/esm/internal/core.js:520:33\n    at file:///home/takuya/midnight/gyotak-catch-v3/node_modules/effect/dist/esm/internal/fiberRuntime.js:945:41"
+    err: "Transaction submission error"

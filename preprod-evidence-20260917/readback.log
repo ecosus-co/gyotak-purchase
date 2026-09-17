@@ -1,0 +1,32 @@
+
+  - contract state (read from indexer)
+    indexer:            https://indexer.preprod.midnight.network/api/v4/graphql
+    contractAddress:    fe71367b28596c91a490e7e900e3d521d0597ec5456020b3e8e19cd5e76d7043
+    owner:              20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be
+    purchases.size:     2
+  - PurchaseRecord
+    purchaseId:         PB-20260917-a97953d3  (hex 50422d32303236303931372d6139373935336433000000000000000000000000)
+    purchaseCommitment: d27ad11f85d822653a0832eac54a1d0b576470bf9c48117ebf3b029fb4a47889
+    lotId:              158eee82b7ecebcc7ad1b6583f313948ca3882eb87b257b1826519b5969d278f
+    committedAt:        1789652255 (2026-09-17T13:37:35.000Z)
+    schema:             1
+    commitment check:   MATCH (expected d27ad11f85d822653a0832eac54a1d0b576470bf9c48117ebf3b029fb4a47889)
+
+[22:41:14.138] INFO (51475): Goodbye.
+rc=0
+
+  - contract state (read from indexer)
+    indexer:            https://indexer.preprod.midnight.network/api/v4/graphql
+    contractAddress:    fe71367b28596c91a490e7e900e3d521d0597ec5456020b3e8e19cd5e76d7043
+    owner:              20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be
+    bindings.size:      2
+    purchase exists:    true
+  - XBinding
+    purchaseId:         PB-20260917-a97953d3  (hex 50422d32303236303931372d6139373935336433000000000000000000000000)
+    handle:             gyotaku_proto  (hex 67796f74616b755f70726f746f00000000000000000000000000000000000000)
+    boundAt:            1789652345 (2026-09-17T13:39:05.000Z)
+    schema:             1
+    handle check:       MATCH (expected gyotaku_proto)
+
+[22:41:20.223] INFO (51518): Goodbye.
+rc=0
