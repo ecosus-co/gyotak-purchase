@@ -71,9 +71,12 @@ submitted to the Midnight Foundation:
 - **Application document**: [`deployments/gyotak-purchase.md`](deployments/gyotak-purchase.md)
 - **Empirical evidence**: [`preprod-evidence-20260917/`](preprod-evidence-20260917/)
 
-### Contract address (Preprod)
+### Contract addresses
 
-`fe71367b28596c91a490e7e900e3d521d0597ec5456020b3e8e19cd5e76d7043`
+Mainnet: `b6f0b4d275cdc96547042f0c38226aaa95beba95e325a831e1722f1313b15179`
+(deployed 2026-09-18, block 2,629,712)
+
+Preprod: `fe71367b28596c91a490e7e900e3d521d0597ec5456020b3e8e19cd5e76d7043`
 
 ### Owner public key
 

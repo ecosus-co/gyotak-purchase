@@ -3,6 +3,10 @@
 Records produced on Midnight Preprod on 2026-09-17, during the rehearsal that
 precedes this contract's Mainnet authorization request.
 
+The contract was subsequently deployed to Mainnet at
+`b6f0b4d275cdc96547042f0c38226aaa95beba95e325a831e1722f1313b15179` on 2026-09-18
+(block 2,629,712). The records below are from the Preprod rehearsal that preceded it.
+
 ```
 Contract  fe71367b28596c91a490e7e900e3d521d0597ec5456020b3e8e19cd5e76d7043
 Owner     20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be
