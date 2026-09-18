@@ -63,6 +63,15 @@ Full technical report (defensive publication):
 [TR-2026-015](https://gyotak-tr.pages.dev/tr-2026-015/) (CC BY 4.0), permanently
 archived at [perma.cc/5TXA-G7BP](https://perma.cc/5TXA-G7BP).
 
+Follow-up report (design disclosure):
+[TR-2026-016 — Referral-Bound Purchase Claims](https://gyotak-tr.pages.dev/tr-2026-016/)
+(CC BY 4.0), published 2026-09-18, permanently archived at
+[perma.cc/5B7R-F7FC](https://perma.cc/5B7R-F7FC). It extends the binding described
+above with the buyer's own referral ID (v3, not yet implemented), so that a referral
+link and the purchase it cites can be tied together on chain alone.
+SHA-256 of the published HTML:
+`a7007f66dcd118ad3bd7ac3f36dbbbbec0cbe62739724f45bea6bcb83d3239b2`
+
 ## Mainnet deployment authorization application
 
 This repository accompanies a Mainnet deployment authorization application
