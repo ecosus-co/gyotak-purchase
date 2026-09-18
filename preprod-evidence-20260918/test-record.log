@@ -1,0 +1,67 @@
+[start 2026-09-18T15:34:39+09:00]
+[harness 2026-09-18T06:34:42.903Z] purchaseId        : PB-20260918-b7f3c55d
+[harness 2026-09-18T06:34:42.904Z] buyerId32         : len=32 sha8=f7f1a9c8 (memory only)
+[harness 2026-09-18T06:34:42.904Z] nonce             : len=32 sha8=76da49c2 (memory only, random)
+[harness 2026-09-18T06:34:42.904Z] LOCAL commitment  : bdeb7b88c067d51437ccf20222b9032faff29920dfdbff1139be2ec3bbc4a4a3  = SHA-256(nonce || buyerId32)
+[harness 2026-09-18T06:34:42.904Z] lotId             : ff74f7ed128d778223e6c844342bce38bb3e47606a54c830f34ed92ea32fb542  = SHA-256("gyotak:lot:" || "TEST-LOT-V3-20260918")
+[harness 2026-09-18T06:34:42.904Z] handle            : gyotak_test -> 67796f74616b5f74657374000000000000000000000000000000000000000000
+[harness 2026-09-18T06:34:42.904Z] referrerId        : aff_0123456789abcdef0123456789abcdef -> 0123456789abcdef0123456789abcdef00000000000000000000000000000000
+[harness 2026-09-18T06:34:42.907Z] contract          : e413ff91958079d1ee2e4c792fe19a9c14a5d4ed7eb7966d3526308a3ea2f846
+
+[wallet] Restoring saved state from /home/takuya/midnight/gyotak-purchase-v3/midnight-level-db/preprod
+  ✓ Building wallet
+
+──────────────────────────────────────────────────────────────
+  Wallet Overview                            Network: preprod
+──────────────────────────────────────────────────────────────
+  Unshielded Address (send tNight here):
+  mn_addr_preprod156r935l92s4r6ze2k4nffn0k5en25jqprhg9x3xl3lm0ltkaam8q4py66s
+──────────────────────────────────────────────────────────────
+
+[deploy] Starting wallet sync (no spinner wrap)...
+[deploy] Sync complete in 2.8s after 8 emissions
+[15:37:18.133] INFO (106677): wallet state persisted
+    dir: "/home/takuya/midnight/gyotak-purchase-v3/midnight-level-db/preprod"
+
+──────────────────────────────────────────────────────────────
+  Wallet Overview                            Network: preprod
+──────────────────────────────────────────────────────────────
+
+  Shielded (ZSwap)
+  └─ Address: mn_shield-addr_preprod1c8yf4dmy47pshyznhx4gtp89grzsqkg89etx58pnwftwcms9gapaglvjjvtkcy49sj5kc65qx5vsrmsw7fqd6aealz3gkeg2kzqfqes2xkw2n
+
+  Unshielded
+  ├─ Address: mn_addr_preprod156r935l92s4r6ze2k4nffn0k5en25jqprhg9x3xl3lm0ltkaam8q4py66s
+  └─ Balance: 1,000,000,000 tNight
+
+  Dust
+  └─ Address: mn_dust_preprod1wd6rgfyh77awlww7rs2cufcun5uwpjvfcd2jhs3dqx2k42msxrlhzqa9l3l
+
+──────────────────────────────────────────────────────────────
+    DUST present: 5,000,000,000,000,000,000 (1 coins)
+
+  ✓ Dust tokens already available (5,000,000,000,000,000,000 DUST)
+2026-09-18 15:37:18        RPC-CORE: subscribeRuntimeVersion(): RuntimeVersion:: disconnected from wss://rpc.preprod.midnight.network/: 1000:: Normal Closure
+2026-09-18 15:37:18        RPC-CORE: subscribeRuntimeVersion(): RuntimeVersion:: disconnected from wss://rpc.preprod.midnight.network/: 1000:: Normal Closure
+[15:37:20.119] INFO (106677): Joined contract at address: e413ff91958079d1ee2e4c792fe19a9c14a5d4ed7eb7966d3526308a3ea2f846
+[harness 2026-09-18T06:37:20.120Z] --- pass 1: recordPurchase ---
+[stable-sync] 2026-09-18T06:37:20.122Z initial synced view: isSynced=true dust.progress=1533541/0 dust.syncTime=2026-09-18T06:36:48.000Z dust.coins=1
+[stable-sync] waiting 45s before re-checking...
+[stable-sync] 2026-09-18T06:38:15.840Z fresh synced emission after 10.7s: isSynced=true dust.progress=1533544/0 dust.syncTime=2026-09-18T06:37:06.000Z dust.coins=1
+[15:38:15.843] INFO (106677): recordPurchase...
+    purchaseId: "50422d32303236303931382d6237663363353564000000000000000000000000"
+[15:38:52.089] INFO (106677): Transaction 00e63d61095951f8301c2f3bc618d939894fc1ade981f4de93624fcfbd099862c2 added in block 2600143
+[harness 2026-09-18T06:38:52.090Z] purchase txId=00e63d61095951f8301c2f3bc618d939894fc1ade981f4de93624fcfbd099862c2 block=2600143
+[harness 2026-09-18T06:38:52.090Z] --- pass 2: recordXBinding ---
+[stable-sync] 2026-09-18T06:38:52.094Z initial synced view: isSynced=true dust.progress=1533546/0 dust.syncTime=2026-09-18T06:38:36.000Z dust.coins=1
+[stable-sync] waiting 45s before re-checking...
+[stable-sync] 2026-09-18T06:39:45.903Z fresh synced emission after 8.8s: isSynced=true dust.progress=1533551/0 dust.syncTime=2026-09-18T06:38:48.000Z dust.coins=1
+[15:39:45.906] INFO (106677): recordXBinding...
+    purchaseId: "50422d32303236303931382d6237663363353564000000000000000000000000"
+[15:40:17.940] INFO (106677): Transaction 00ba73429b364cab10746340e2569d6ad2a751570e589ac38b3fd00ad5eb585516 added in block 2600157
+[harness 2026-09-18T06:40:17.940Z] binding  txId=00ba73429b364cab10746340e2569d6ad2a751570e589ac38b3fd00ad5eb585516 block=2600157
+[15:40:19.413] INFO (106677): wallet state persisted
+    dir: "/home/takuya/midnight/gyotak-purchase-v3/midnight-level-db/preprod"
+[harness 2026-09-18T06:40:19.486Z] RESULT {"purchaseId":"PB-20260918-b7f3c55d","commitmentHex":"bdeb7b88c067d51437ccf20222b9032faff29920dfdbff1139be2ec3bbc4a4a3","lotId":"ff74f7ed128d778223e6c844342bce38bb3e47606a54c830f34ed92ea32fb542","purchase":{"txId":"00e63d61095951f8301c2f3bc618d939894fc1ade981f4de93624fcfbd099862c2","block":"2600143","blockHash":"5354a10cb2fe4a60b28645e88d2af37412b0b474c360213bd02d3a6579b2a2f6"},"binding":{"txId":"00ba73429b364cab10746340e2569d6ad2a751570e589ac38b3fd00ad5eb585516","block":"2600157","blockHash":"1d6a2a9a60fb95aab9df33ae79228dc7848c3cead6a669c0c132837d6a20243b"}}
+[harness 2026-09-18T06:40:19.486Z] done; exitCode=0; nonce/buyerId32 zeroed, never written anywhere
+[end 2026-09-18T15:40:19+09:00] rc=0

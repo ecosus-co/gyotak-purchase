@@ -2,62 +2,54 @@ pragma language_version >= 0.22;
 
 import CompactStandardLibrary;
 
-// Purchase commitment (gyotak-purchase)
+// gyotak-purchase v3 — anonymous purchase commitments, and the claims that name them.
 //
-// Records "someone bought lot X" without revealing who the buyer is, and — when
-// the buyer chooses to speak publicly — records which public account is making
-// the claim.
+// Two kinds of record live here.
 //
-// Two ledgers, written separately:
+// Every purchase becomes a commitment in `purchases`: persistentCommit over the
+// buyer's identifier and a random nonce. The buyer stays off-chain. What the
+// chain fixes is that a record of this shape existed at this block, that its
+// timestamp was not back-dated, and that only a party holding the nonce can
+// open it.
 //
-//   purchases  every purchase. The buyer is hidden inside a commitment.
-//   bindings   the subset the buyer has attached a public handle to. Written
-//              only for buyers who have registered a handle; a buyer who stays
-//              silent has purchases and no binding.
+// A buyer who chooses to speak publicly adds a record to `bindings`. That record
+// names two things: the account they will post from, and their own referral id.
 //
-// Reading both together gives "@handle bought lot X at time T". Reading only
-// purchases gives "someone bought lot X at time T".
+// Why both. The handle is self-reported — the operator authenticates the buyer
+// over their own connection but cannot verify that the account is theirs. The
+// referral id is different: the operator issued it to that customer when their
+// payment was confirmed, and it reaches them only inside their personal
+// connection URL. So the referral id evidences that the claimant is the buyer,
+// and the handle says where they will post.
 //
-// What the chain attests to is bounded: that these records existed at block N,
-// have not been altered since, and were not back-dated. It does not attest that
-// the purchase physically occurred.
+// Neither alone is sufficient. A referral id appears in the post itself, so
+// anyone reading a genuine post can copy it into a fabricated one; the handle
+// recorded alongside it is what makes that fail. A verifier checks both against
+// the same binding.
+//
+// Stored plaintext, both of them. A reader who sees the post already has the
+// handle and the referral URL in front of them; publishing the values here lets
+// them compare directly rather than compute a digest. The cost is that the set
+// of accounts and referral ids that have claimed a GYOTAK purchase is publicly
+// enumerable — which is the point, since these are people who chose to speak.
+//
+// What a binding does NOT say: that the referral id is still active. Referral
+// ids are permanent once issued, but the operator can suspend one and issue a
+// replacement. A binding is a historical fact — "at this block, this purchase
+// was claimed by this account under this referral id" — not a statement about
+// where a commission is payable today.
 
 struct PurchaseRecord {
-  // Purchase id (plaintext; same value as the Map key).
-  purchaseId: Bytes<32>,
-  // persistentCommit<Bytes<32>>(buyerId32, nonce)
-  //   = SHA-256(nonce ‖ buyerId32)   — identical to purchase_commitment in the
-  //   operator's database, so a buyer can reproduce it with one hash, without
-  //   any Midnight tooling.
-  purchaseCommitment: Bytes<32>,
-  // Catch lot id = SHA-256("gyotak:lot:" ‖ catch_report_id). Stored in plaintext.
-  lotId: Bytes<32>,
-  // Commitment time (unix seconds). Bound to chain time by the blockTime asserts.
-  committedAt: Uint<64>,
-  // Record version. v1 = 1.
+  purchaseCommitment: Bytes<32>,  // persistentCommit(buyerId32, nonce) = SHA-256(nonce ‖ buyerId32)
+  lotId: Bytes<32>,               // SHA-256("gyotak:lot:" ‖ catch_report_id); resolves on gyotak-catch
+  committedAt: Uint<64>,          // operator clock, constrained to ±600s of the producing block
   schema: Uint<8>,
 }
 
-// Links one purchase to the public account that claims it.
-//
-// The handle is stored in plaintext, deliberately. A reader who sees the post
-// already knows the handle; publishing it here lets them compare directly,
-// without computing anything. The trade-off is that the set of accounts that
-// have claimed a GYOTAK purchase becomes publicly enumerable — which is the
-// point, since these are accounts that chose to speak.
 struct XBinding {
-  // The purchase this binding refers to. Same value as the Map key, and the key
-  // of the corresponding entry in `purchases`.
-  purchaseId: Bytes<32>,
-  // Public account handle, without the leading "@", ASCII, right-padded with
-  // zero bytes. X handles are at most 15 characters.
-  // Self-reported by the buyer; see recordXBinding.
-  handle: Bytes<32>,
-  // Binding time (unix seconds). Bound to chain time by the blockTime asserts.
-  // A binding whose block time precedes the post it supports cannot have been
-  // fabricated in response to that post.
+  handle: Bytes<32>,      // ASCII, right-padded with zero bytes. Self-reported.
+  referrerId: Bytes<32>,  // the 16 raw bytes behind "aff_<hex>", right-padded. Operator-issued.
   boundAt: Uint<64>,
-  // Record version. v1 = 1.
   schema: Uint<8>,
 }
 
@@ -65,14 +57,13 @@ export ledger purchases: Map<Bytes<32>, PurchaseRecord>;
 export ledger bindings: Map<Bytes<32>, XBinding>;
 export ledger owner: Bytes<32>;
 
-// Buyer identifier (32 bytes). The operator passes through the value it fixed in
-// its database.
 witness getBuyerId(purchaseId: Bytes<32>): Bytes<32>;
-// Opening nonce (32 bytes). Issued by the operator and held in a table separate
-// from the commitments. Never logged.
 witness getPurchaseNonce(purchaseId: Bytes<32>): Bytes<32>;
 witness localSecretKey(): Bytes<32>;
 
+// Domain tag distinct from gyotak-catch ("gyotak:pk:") and gyotak-temp-log
+// ("gyotak:templog:pk:"), so one operator secret yields a different owner key
+// per contract and authorization does not leak across them.
 export pure circuit publicKey(sk: Bytes<32>): Bytes<32> {
   return persistentHash<Vector<2, Bytes<32>>>([pad(32, "gyotak:purchase:pk:"), sk]);
 }
@@ -85,96 +76,76 @@ export circuit recordPurchase(
   purchaseId: Bytes<32>,
   lotId: Bytes<32>,
   schema: Uint<8>,
-  timestamp: Uint<64>
+  timestamp: Uint<64>,
 ): [] {
-  const sk = localSecretKey();
-  assert(disclose(publicKey(sk) == owner), "unauthorized");
+  assert(disclose(publicKey(localSecretKey()) == owner), "unauthorized");
 
-  // Bind the commitment time to the chain's own clock, within ±600 seconds
-  // (the same window used by temp-log and catch v3).
-  const t = disclose(timestamp);
-  const lower = (t - 600) as Uint<64>;
-  const upper = (t + 600) as Uint<64>;
-  assert(blockTimeGte(lower), "timestamp too far in past");
-  assert(blockTimeLte(upper), "timestamp too far in future");
+  // Insert-only. A second write to the same key is rejected, so a record cannot
+  // be revised after the fact.
+  assert(!purchases.member(disclose(purchaseId)), "purchase already recorded");
 
-  // Insert only. Once recorded, a purchase can be neither updated nor deleted.
-  assert(!purchases.member(disclose(purchaseId)), "purchase already exists");
+  // The caller's clock must agree with the block's within ten minutes in either
+  // direction. A purchase cannot be back-dated to precede the post it supports.
+  assert(blockTimeGte(disclose(timestamp) - 600 as Uint<64>), "timestamp too far in the future");
+  assert(blockTimeLte(disclose(timestamp) + 600 as Uint<64>), "timestamp too far in the past");
 
-  // Buyer id and nonce arrive as witnesses; the commitment is formed in-circuit.
   const buyerId = getBuyerId(purchaseId);
   const nonce = getPurchaseNonce(purchaseId);
+
+  // For a Bytes<32> value this is the plain SHA-256(nonce ‖ buyerId32) — no
+  // domain separation, no field arithmetic. A buyer holding their nonce can
+  // reproduce it with one hash, in any language, without Midnight tooling and
+  // without the operator's cooperation.
   const purchaseCommitment = persistentCommit<Bytes<32>>(buyerId, nonce);
 
-  const record = PurchaseRecord {
-    purchaseId: purchaseId,
-    purchaseCommitment: purchaseCommitment,
-    lotId: lotId,
-    committedAt: timestamp,
-    schema: schema,
-  };
-  purchases.insert(disclose(purchaseId), disclose(record));
+  purchases.insert(disclose(purchaseId), PurchaseRecord {
+    purchaseCommitment: disclose(purchaseCommitment),
+    lotId: disclose(lotId),
+    committedAt: disclose(timestamp),
+    schema: disclose(schema),
+  });
 }
 
-// Attaches a public account handle to a purchase already on this ledger.
-//
-// Written once per purchase, immediately after recordPurchase, for buyers who
-// have registered a handle with the operator.
-//
-// The handle is self-reported. The operator authenticates the buyer — the
-// registration arrives over the same authenticated session the purchase did, so
-// the operator knows which customer is speaking — but it does not verify that
-// the handle given belongs to that customer. A buyer could register someone
-// else's handle and the operator would not detect it.
-//
-// So this record means: at block N, the operator recorded that the buyer of this
-// purchase claimed this handle. It does not mean the handle is theirs. A reader
-// who wants more should look for the purchase id on the account itself; an
-// account that publishes it is doing something the operator cannot do for it.
 export circuit recordXBinding(
   purchaseId: Bytes<32>,
   handle: Bytes<32>,
+  referrerId: Bytes<32>,
   schema: Uint<8>,
-  timestamp: Uint<64>
+  timestamp: Uint<64>,
 ): [] {
-  const sk = localSecretKey();
-  assert(disclose(publicKey(sk) == owner), "unauthorized");
+  assert(disclose(publicKey(localSecretKey()) == owner), "unauthorized");
 
-  const t = disclose(timestamp);
-  const lower = (t - 600) as Uint<64>;
-  const upper = (t + 600) as Uint<64>;
-  assert(blockTimeGte(lower), "timestamp too far in past");
-  assert(blockTimeLte(upper), "timestamp too far in future");
-
-  // A binding without its purchase would be unverifiable, so require the
-  // purchase first.
+  // A claim cannot exist without the purchase it refers to. This is what stops
+  // a claim being published about a purchase that was never recorded.
   assert(purchases.member(disclose(purchaseId)), "purchase not found");
 
-  // Insert only, as with purchases. A handle cannot be reassigned after the
-  // fact, which is what makes the binding's block time meaningful.
-  assert(!bindings.member(disclose(purchaseId)), "binding already exists");
+  // Insert-only, like a purchase. A handle or referral id cannot be reassigned
+  // afterwards, which is what makes the block time meaningful as evidence that
+  // the claim preceded the post.
+  assert(!bindings.member(disclose(purchaseId)), "binding already recorded");
 
-  const record = XBinding {
-    purchaseId: purchaseId,
-    handle: handle,
-    boundAt: timestamp,
-    schema: schema,
-  };
-  bindings.insert(disclose(purchaseId), disclose(record));
+  assert(blockTimeGte(disclose(timestamp) - 600 as Uint<64>), "timestamp too far in the future");
+  assert(blockTimeLte(disclose(timestamp) + 600 as Uint<64>), "timestamp too far in the past");
+
+  bindings.insert(disclose(purchaseId), XBinding {
+    handle: disclose(handle),
+    referrerId: disclose(referrerId),
+    boundAt: disclose(timestamp),
+    schema: disclose(schema),
+  });
 }
 
+// Lets the admin key change without redeploying, which preserves the contract
+// address and therefore every verification link already published.
 export circuit rotateOwner(newOwner: Bytes<32>): [] {
-  const sk = localSecretKey();
-  assert(disclose(publicKey(sk) == owner), "unauthorized");
+  assert(disclose(publicKey(localSecretKey()) == owner), "unauthorized");
   owner = disclose(newOwner);
 }
 
-export circuit verifyPurchase(purchaseId: Bytes<32>): PurchaseRecord {
+export circuit verifyPurchase(purchaseId: Bytes<32>): [] {
   assert(purchases.member(disclose(purchaseId)), "purchase not found");
-  return purchases.lookup(disclose(purchaseId));
 }
 
-export circuit verifyXBinding(purchaseId: Bytes<32>): XBinding {
+export circuit verifyXBinding(purchaseId: Bytes<32>): [] {
   assert(bindings.member(disclose(purchaseId)), "binding not found");
-  return bindings.lookup(disclose(purchaseId));
 }

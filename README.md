@@ -1,13 +1,13 @@
 # gyotak-purchase
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Midnight](https://img.shields.io/badge/Midnight-Preprod-purple)](https://midnight.network)
+[![Midnight](https://img.shields.io/badge/Midnight-Mainnet-purple)](https://midnight.network)
 
 A Midnight Compact contract that records anonymous purchase commitments for
 flash-frozen seafood, operated by ECOSUS CO., LTD. (Pranburi, Thailand). This is
-the third contract in the GYOTAK traceability system; the first two,
+the third contract in the GYOTAK traceability system;
 [`gyotak-catch`](https://github.com/ecosus-co/gyotak-catch) and
-[`gyotak-temp-log`](https://github.com/ecosus-co/gyotak-temp-log), are
+[`gyotak-temp-log`](https://github.com/ecosus-co/gyotak-temp-log) are
 Mainnet-approved via
 [PR #96](https://github.com/midnightntwrk/midnight-improvement-proposals/pull/96)
 and
@@ -25,78 +25,90 @@ The contract keeps two ledger maps:
 
 ```
 purchases   every purchase; the buyer is hidden inside a commitment
-bindings    the subset a buyer has attached a public handle to
+bindings    the subset a buyer has claimed, naming where they post and who they are
 ```
 
-**`purchases`** holds one record per purchase:
-`purchaseCommitment` = `persistentCommit<Bytes<32>>(buyerId32, nonce)`, plus
-`lotId`, `committedAt` and `schema`. The buyer's identifier and the opening nonce
-enter the circuit as witnesses and never reach the chain. For a `Bytes<32>` value
-the commitment is the plain `SHA-256(nonce ‖ buyerId32)`, so a buyer can open
-their own record with one hash on any machine — no Midnight SDK, no cooperation
-from GYOTAK.
+**`purchases`** holds one record per purchase: `purchaseCommitment` =
+`persistentCommit<Bytes<32>>(buyerId32, nonce)`, plus `lotId`, `committedAt` and
+`schema`. The buyer's identifier and the opening nonce enter the circuit as
+witnesses and never reach the chain. For a `Bytes<32>` value the commitment is the
+plain `SHA-256(nonce ‖ buyerId32)`, so a buyer can open their own record with one
+hash on any machine — no Midnight SDK, no cooperation from GYOTAK.
 
-**`bindings`** holds the claims. A buyer who chooses to speak publicly can attach
-their account handle to one of their purchases; the handle is stored in plaintext,
-with `boundAt` recording when the claim was made. A binding cannot exist without
-its purchase, and neither map allows updates or deletes.
+**`bindings`** holds the claims. A buyer who chooses to speak publicly attaches two
+values to one of their purchases: the account handle they will post from, and their
+own referral id. Both are stored in plaintext, with `boundAt` recording when the
+claim was made. A binding cannot exist without its purchase, and neither map allows
+updates or deletes.
 
-Reading both maps together yields "@handle bought lot X at time T". Reading only
-`purchases` yields "someone bought lot X at time T". A buyer who stays silent
-leaves no public trace at all.
+Reading both maps together yields "@handle, whose referral link is this one, bought
+lot X at time T". Reading only `purchases` yields "someone bought lot X at time T".
+A buyer who stays silent leaves no public trace at all.
 
 `lotId` is `SHA-256("gyotak:lot:" ‖ catch_report_id)`, which resolves to the
 landing recorded by `gyotak-catch` and from there to the storage temperatures
 published by `gyotak-temp-log`.
 
-### What this does not prove
+### Why two identifiers
 
-The handle in a binding is **self-reported**. The claim arrives over the buyer's
-own authenticated connection, so the operator knows which customer is speaking —
-but the operator does not verify that the account is theirs. The chain attests
-that GYOTAK recorded a commitment and a claim at given blocks and has not altered
-them since; it does not attest that a purchase physically occurred, and opening a
-commitment demonstrates knowledge of the nonce rather than identity.
-TR-2026-015 § 5 states the boundary in full.
+A handle is self-reported. Anyone can claim one that is not theirs, and the
+operator cannot detect it — the earlier version of this contract named that as the
+sharpest limit of its design.
 
-Full technical report (defensive publication):
-[TR-2026-015](https://gyotak-tr.pages.dev/tr-2026-015/) (CC BY 4.0), permanently
-archived at [perma.cc/5TXA-G7BP](https://perma.cc/5TXA-G7BP).
+A referral id is different. The operator issues it when a payment is confirmed, and
+it reaches the customer only inside their personal connection URL. Recording both
+means a fabricated post must match a binding on *both* fields, and only someone
+holding that buyer's connection URL can produce the pair. A referral id appears in
+the post itself, so anyone reading a genuine post can copy it into a fake one; the
+handle recorded alongside it is what makes that fail.
 
-Follow-up report (design disclosure):
-[TR-2026-016 — Referral-Bound Purchase Claims](https://gyotak-tr.pages.dev/tr-2026-016/)
-(CC BY 4.0), published 2026-09-18, permanently archived at
-[perma.cc/5B7R-F7FC](https://perma.cc/5B7R-F7FC). It extends the binding described
-above with the buyer's own referral ID (v3, not yet implemented), so that a referral
-link and the purchase it cites can be tied together on chain alone.
-SHA-256 of the published HTML:
-`a7007f66dcd118ad3bd7ac3f36dbbbbec0cbe62739724f45bea6bcb83d3239b2`
+This is evidence, not proof. A connection URL can be shared or leaked, and the
+operator would not detect it. `deployments/gyotak-purchase.md` § 6 states the
+boundary in full.
 
-## Mainnet deployment authorization application
-
-This repository accompanies a Mainnet deployment authorization application
-submitted to the Midnight Foundation:
+## Mainnet deployment
 
 - **Application document**: [`deployments/gyotak-purchase.md`](deployments/gyotak-purchase.md)
-- **Empirical evidence**: [`preprod-evidence-20260917/`](preprod-evidence-20260917/)
+- **Empirical evidence**: [`preprod-evidence-20260918/`](preprod-evidence-20260918/)
 
 ### Contract addresses
 
-Mainnet: `b6f0b4d275cdc96547042f0c38226aaa95beba95e325a831e1722f1313b15179`
-(deployed 2026-09-18, block 2,629,712)
+Mainnet: `d11d52bd5875ecc2e89e97149e0237db20a91c989f30268950e892655a2a2a57`
+(deployed 2026-09-18, block 2,636,444)
 
-Preprod: `fe71367b28596c91a490e7e900e3d521d0597ec5456020b3e8e19cd5e76d7043`
+Preprod: `e413ff91958079d1ee2e4c792fe19a9c14a5d4ed7eb7966d3526308a3ea2f846`
 
 ### Owner public key
 
 `20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be`
+
+### Earlier versions
+
+The contract has been deployed three times. Each generation is a separate address;
+records written to one stay there.
+
+| | Mainnet | Preprod | Status |
+|---|---|---|---|
+| v3 (current) | `d11d52bd…2a2a57` | `e413ff91…3ea2f846` | active |
+| v2 | `b6f0b4d2…3b15179` | `fe71367b…5e76d7043` | frozen |
+| v1 | — | `a853e32e…fdfc7f1c7` | frozen |
+
+v2 was authorized via
+[PR #316](https://github.com/midnightntwrk/midnight-improvement-proposals/pull/316)
+and its address recorded in
+[PR #317](https://github.com/midnightntwrk/midnight-improvement-proposals/pull/317).
+It holds one purchase and one binding from the rehearsal described there. v3 adds
+the referral id to each binding; the submitting process now targets v3 only, and
+the switch was made when no record was pending, so no purchase is stranded without
+its binding.
 
 ## Repository structure
 
 ```
 contracts/                          Compact source (gyotak-purchase.compact)
 deployments/gyotak-purchase.md      Mainnet authorization application
-preprod-evidence-20260917/          Preprod records and verification procedures
+preprod-evidence-20260918/          v3 records and verification procedures
+preprod-evidence-20260917/          v2 records (kept for reference)
 ```
 
 ## Build
@@ -105,12 +117,12 @@ preprod-evidence-20260917/          Preprod records and verification procedures
 compact compile contracts/gyotak-purchase.compact contracts/managed
 ```
 
-Built with compactc 0.30.0 (language 0.22.0, runtime 0.15.0). A full rebuild from
-a clean directory, including proving-key generation, reproduces all twenty
-artefacts under `contracts/managed/keys` and `contracts/managed/zkir` byte for
-byte; their SHA-256 values are listed in the application document § 5.4. The
-verifier keys stored in the deployed contract's state are byte-for-byte identical
-to the rebuilt `keys/*.verifier` files.
+Built with compactc 0.30.0 (language 0.22.0, runtime 0.15.0). A full rebuild from a
+clean directory, including proving-key generation, reproduces all twenty artefacts
+under `contracts/managed/keys` and `contracts/managed/zkir` byte for byte; their
+SHA-256 values are listed in the application document § 5.4. The verifier keys
+stored in both deployed contracts' state are byte-for-byte identical to the rebuilt
+`keys/*.verifier` files.
 
 ## Related repositories
 

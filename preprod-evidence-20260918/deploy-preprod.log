@@ -1,0 +1,61 @@
+[start 2026-09-18T15:27:46+09:00]
+
+> gyotak-purchase-v3@1.0.0 deploy:preprod
+> NODE_OPTIONS='--max-old-space-size=8192' npm run preprod -- deploy --initial-owner 20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be
+
+
+> gyotak-purchase-v3@1.0.0 preprod
+> PATH=/home/takuya/.local/node22/bin:$PATH NODE_OPTIONS='--max-old-space-size=8192' node --no-warnings --experimental-specifier-resolution=node --loader ts-node/esm src/preprod.ts deploy --initial-owner 20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be
+
+
+[wallet] Restoring saved state from /home/takuya/midnight/gyotak-purchase-v3/midnight-level-db/preprod
+  ✓ Building wallet
+
+──────────────────────────────────────────────────────────────
+  Wallet Overview                            Network: preprod
+──────────────────────────────────────────────────────────────
+  Unshielded Address (send tNight here):
+  mn_addr_preprod156r935l92s4r6ze2k4nffn0k5en25jqprhg9x3xl3lm0ltkaam8q4py66s
+──────────────────────────────────────────────────────────────
+
+[deploy] Starting wallet sync (no spinner wrap)...
+2026-09-18 15:30:28        RPC-CORE: subscribeRuntimeVersion(): RuntimeVersion:: disconnected from wss://rpc.preprod.midnight.network/: 1000:: Normal Closure
+2026-09-18 15:30:28        RPC-CORE: subscribeRuntimeVersion(): RuntimeVersion:: disconnected from wss://rpc.preprod.midnight.network/: 1000:: Normal Closure
+[deploy] Sync complete in 11.4s after 193 emissions
+[15:30:36.901] INFO (105905): wallet state persisted
+    dir: "/home/takuya/midnight/gyotak-purchase-v3/midnight-level-db/preprod"
+
+──────────────────────────────────────────────────────────────
+  Wallet Overview                            Network: preprod
+──────────────────────────────────────────────────────────────
+
+  Shielded (ZSwap)
+  └─ Address: mn_shield-addr_preprod1c8yf4dmy47pshyznhx4gtp89grzsqkg89etx58pnwftwcms9gapaglvjjvtkcy49sj5kc65qx5vsrmsw7fqd6aealz3gkeg2kzqfqes2xkw2n
+
+  Unshielded
+  ├─ Address: mn_addr_preprod156r935l92s4r6ze2k4nffn0k5en25jqprhg9x3xl3lm0ltkaam8q4py66s
+  └─ Balance: 1,000,000,000 tNight
+
+  Dust
+  └─ Address: mn_dust_preprod1wd6rgfyh77awlww7rs2cufcun5uwpjvfcd2jhs3dqx2k42msxrlhzqa9l3l
+
+──────────────────────────────────────────────────────────────
+    DUST present: 5,000,000,000,000,000,000 (1 coins)
+
+  ✓ Dust tokens already available (5,000,000,000,000,000,000 DUST)
+  ✓ Configuring providers
+[stable-sync] 2026-09-18T06:30:36.945Z initial synced view: isSynced=true dust.progress=1533527/0 dust.syncTime=2026-09-18T06:29:42.000Z dust.coins=1
+[stable-sync] waiting 45s before re-checking...
+[stable-sync] 2026-09-18T06:31:26.561Z fresh synced emission after 4.6s: isSynced=true dust.progress=1533527/0 dust.syncTime=2026-09-18T06:29:42.000Z dust.coins=1
+[deploy] 2026-09-18T06:31:26.566Z starting deploy (proof + DUST spend declaration)
+[15:31:26.567] INFO (105905): Deploying gyotak-purchase contract...
+    initialOwner: "20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be"
+  ✓ Deploying contract
+[15:31:52.763] INFO (105905): Saved contract address.
+    file: "/home/takuya/midnight/gyotak-purchase-v3/.contract-address.preprod"
+    address: "e413ff91958079d1ee2e4c792fe19a9c14a5d4ed7eb7966d3526308a3ea2f846"
+    initialOwner: "20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be"
+[15:31:54.480] INFO (105905): wallet state persisted
+    dir: "/home/takuya/midnight/gyotak-purchase-v3/midnight-level-db/preprod"
+[15:31:54.529] INFO (105905): Goodbye.
+[end 2026-09-18T15:31:54+09:00] rc=0

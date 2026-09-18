@@ -1,0 +1,62 @@
+[start 2026-09-18T22:21:18+09:00]
+
+> gyotak-purchase-v3@1.0.0 deploy:mainnet
+> NODE_OPTIONS='--max-old-space-size=8192' npm run mainnet -- deploy --initial-owner 20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be
+
+
+> gyotak-purchase-v3@1.0.0 mainnet
+> PATH=/home/takuya/.local/node22/bin:$PATH NODE_OPTIONS='--max-old-space-size=8192' node --no-warnings --experimental-specifier-resolution=node --loader ts-node/esm src/mainnet.ts deploy --initial-owner 20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be
+
+[mainnet] command=deploy additionalFeeOverhead=50 DUST
+
+[wallet] Restoring saved state from /home/takuya/midnight/gyotak-purchase-v3/midnight-level-db/mainnet
+  ✓ Building wallet
+
+──────────────────────────────────────────────────────────────
+  Wallet Overview                            Network: mainnet
+──────────────────────────────────────────────────────────────
+  Unshielded Address (send tNight here):
+  mn_addr18ehfpzy7hyyj4gm6kt7zkwkejc3sg629yr23tsvjs8kjaf754yvqetqsrz
+──────────────────────────────────────────────────────────────
+
+[deploy] Starting wallet sync (no spinner wrap)...
+2026-09-18 22:21:43        RPC-CORE: subscribeRuntimeVersion(): RuntimeVersion:: disconnected from wss://rpc.mainnet.midnight.foundation/v1/<redacted>: 1000:: Normal Closure
+2026-09-18 22:21:43        RPC-CORE: subscribeRuntimeVersion(): RuntimeVersion:: disconnected from wss://rpc.mainnet.midnight.foundation/v1/<redacted>: 1000:: Normal Closure
+[deploy] Sync complete in 3.4s after 18 emissions
+[22:21:45.318] INFO (121088): wallet state persisted
+    dir: "/home/takuya/midnight/gyotak-purchase-v3/midnight-level-db/mainnet"
+
+──────────────────────────────────────────────────────────────
+  Wallet Overview                            Network: mainnet
+──────────────────────────────────────────────────────────────
+
+  Shielded (ZSwap)
+  └─ Address: mn_shield-addr12258tat3gvn8kulw7hamee94t9gukdc7r877h8fud5p8tqn8r9akl62d796hwr8uynavmr2nn96vww8zh32fscpfjfzanffr4g77akgkv5mhu
+
+  Unshielded
+  ├─ Address: mn_addr18ehfpzy7hyyj4gm6kt7zkwkejc3sg629yr23tsvjs8kjaf754yvqetqsrz
+  └─ Balance: 0 tNight
+
+  Dust
+  └─ Address: mn_dust1w0pwrtr8hl2vncq6s2dpechtum5adssay907s4tkxqmt3yfkxjx5qr0akav
+
+──────────────────────────────────────────────────────────────
+    DUST present: 387,771,798,795,000,000,000 (3 coins)
+
+  ✓ Dust tokens already available (387,771,798,795,000,000,000 DUST)
+  ✓ Configuring providers
+[stable-sync] 2026-09-18T13:21:45.371Z initial synced view: isSynced=true dust.progress=180494/0 dust.syncTime=2026-09-18T13:12:00.000Z dust.coins=3
+[stable-sync] waiting 45s before re-checking...
+[stable-sync] 2026-09-18T13:22:43.786Z fresh synced emission after 13.4s: isSynced=true dust.progress=180494/0 dust.syncTime=2026-09-18T13:12:00.000Z dust.coins=3
+[deploy] 2026-09-18T13:22:43.791Z starting deploy (proof + DUST spend declaration)
+[22:22:43.792] INFO (121088): Deploying gyotak-purchase contract...
+    initialOwner: "20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be"
+  ✓ Deploying contract
+[22:23:09.546] INFO (121088): Saved contract address.
+    file: "/home/takuya/midnight/gyotak-purchase-v3/.contract-address.mainnet"
+    address: "d11d52bd5875ecc2e89e97149e0237db20a91c989f30268950e892655a2a2a57"
+    initialOwner: "20fc1d0d5c405e95c669158a3db32217e2be65247dbea06e243745832af2e1be"
+[22:23:10.186] INFO (121088): wallet state persisted
+    dir: "/home/takuya/midnight/gyotak-purchase-v3/midnight-level-db/mainnet"
+[22:23:10.234] INFO (121088): Goodbye.
+[end 2026-09-18T22:23:10+09:00] rc=0
