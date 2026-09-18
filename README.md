@@ -102,6 +102,26 @@ the referral id to each binding; the submitting process now targets v3 only, and
 the switch was made when no record was pending, so no purchase is stranded without
 its binding.
 
+### Technical reports
+
+Two defensive publications cover this contract. Both are CC BY 4.0.
+
+**TR-2026-015 — Anonymous Purchase Commitment, and the Claim That Names It**
+https://gyotak-tr.pages.dev/tr-2026-015/
+Archived: https://perma.cc/HS7L-YZZD
+
+The construction itself: what the chain records, what a buyer can verify
+unaided, and where the guarantee stops.
+
+**TR-2026-016 — Referral-Bound Purchase Claims**
+https://gyotak-tr.pages.dev/tr-2026-016/
+Archived: https://perma.cc/5CVN-NN2S
+
+Why a binding carries two identifiers rather than one, and the referral
+cycle around it. Published 2026-09-18 as a disclosure of a design that did
+not yet exist; v3 was deployed to Mainnet later the same day, at block
+2,636,444.
+
 ## Repository structure
 
 ```
