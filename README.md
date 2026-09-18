@@ -115,7 +115,7 @@ unaided, and where the guarantee stops.
 
 **TR-2026-016 — Referral-Bound Purchase Claims**
 https://gyotak-tr.pages.dev/tr-2026-016/
-Archived: https://perma.cc/5CVN-NN2S
+Archived: https://perma.cc/8K6N-8F6V
 
 Why a binding carries two identifiers rather than one, and the referral
 cycle around it. Published 2026-09-18 as a disclosure of a design that did
