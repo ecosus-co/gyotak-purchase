@@ -1,5 +1,9 @@
 # Preprod evidence — gyotak-purchase
 
+These are the v2 records, superseded by
+[`preprod-evidence-20260918/`](../preprod-evidence-20260918/). v2 remains deployed
+and frozen at `b6f0b4d275cdc96547042f0c38226aaa95beba95e325a831e1722f1313b15179`.
+
 Records produced on Midnight Preprod on 2026-09-17, during the rehearsal that
 precedes this contract's Mainnet authorization request.
 
