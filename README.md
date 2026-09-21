@@ -105,10 +105,12 @@ its binding.
 ### Technical reports
 
 Two defensive publications cover this contract. Both are CC BY 4.0.
+The full series is listed at https://gyotak-tr.pages.dev/gyotaku-protocol/
 
 **TR-2026-015 — Anonymous Purchase Commitment, and the Claim That Names It**
 https://gyotak-tr.pages.dev/tr-2026-015/
 Archived: https://perma.cc/HS7L-YZZD
+TDCommons: https://www.tdcommons.org/dpubs_series/11785
 
 The construction itself: what the chain records, what a buyer can verify
 unaided, and where the guarantee stops.
@@ -116,6 +118,7 @@ unaided, and where the guarantee stops.
 **TR-2026-016 — Referral-Bound Purchase Claims**
 https://gyotak-tr.pages.dev/tr-2026-016/
 Archived: https://perma.cc/8K6N-8F6V
+TDCommons: https://www.tdcommons.org/dpubs_series/11796
 
 Why a binding carries two identifiers rather than one, and the referral
 cycle around it. Published 2026-09-18 as a disclosure of a design that did
