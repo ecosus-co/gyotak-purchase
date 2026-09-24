@@ -49,6 +49,16 @@ A buyer who stays silent leaves no public trace at all.
 landing recorded by `gyotak-catch` and from there to the storage temperatures
 published by `gyotak-temp-log`.
 
+When a purchase cannot be tied to exactly one landing — the catch photo was
+missed, the landing's species list was left empty, or the only match was filled in
+later by inference — the purchase is still recorded, once per order, with the fixed
+value `lotId = SHA-256("gyotak:lot:no-lot")`
+(`e6a193f127a97a4f600f904800f48a1d41aa733f12ce384951ace8255c2921f8`). This value
+means "no catch record": it resolves to no landing in `gyotak-catch` and no
+temperature log, and the proof page says so. It is the same for every such purchase
+and contains no order number, so it links nothing to anything. `catch_report_id`
+values are UUIDs and are never `no-lot`.
+
 ### Why two identifiers
 
 A handle is self-reported. Anyone can claim one that is not theirs, and the
