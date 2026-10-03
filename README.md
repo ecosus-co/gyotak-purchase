@@ -45,9 +45,13 @@ Reading both maps together yields "@handle, whose referral link is this one, bou
 lot X at time T". Reading only `purchases` yields "someone bought lot X at time T".
 A buyer who stays silent leaves no public trace at all.
 
-`lotId` is `SHA-256("gyotak:lot:" ‖ catch_report_id)`, which resolves to the
-landing recorded by `gyotak-catch` and from there to the storage temperatures
-published by `gyotak-temp-log`.
+`schema` says how to read `lotId`. Records written before 2026-10-04 carry
+`schema = 1`, described next; records written from that day on carry `schema = 2`,
+described in [Record format versions](#record-format-versions-schema).
+
+For `schema = 1`, `lotId` is `SHA-256("gyotak:lot:" ‖ catch_report_id)`, which
+resolves to the landing recorded by `gyotak-catch` and from there to the storage
+temperatures published by `gyotak-temp-log`.
 
 When a purchase cannot be tied to exactly one landing — the catch photo was
 missed, the landing's species list was left empty, or the only match was filled in
@@ -58,6 +62,59 @@ means "no catch record": it resolves to no landing in `gyotak-catch` and no
 temperature log, and the proof page says so. It is the same for every such purchase
 and contains no order number, so it links nothing to anything. `catch_report_id`
 values are UUIDs and are never `no-lot`.
+
+### Record format versions (`schema`)
+
+| `schema` | Written | One record per | `lotId` |
+|---|---|---|---|
+| 1 | before 2026-10-04 | lot of an order | `SHA-256("gyotak:lot:" ‖ catch_report_id)`, or the fixed no-lot value above |
+| 2 | from 2026-10-04 | whole order | `SHA-256("gyotak:order-lots:v1:" ‖ manifest)` |
+
+The date is Thailand time (UTC+7). The first `schema = 2` record is purchase
+`PB-20261004-74418a35`, committed at 2026-10-03 23:43 UTC (Mainnet v3, block
+2,858,510); it comes from a GYOTAK test-customer order.
+
+Records written before the switch keep `schema = 1`. They are not rewritten, and
+they are checked exactly as described above.
+
+**`schema = 2`: one record per order.** The manifest is a text list of the order's
+items, built as follows:
+
+1. For each item of the order, take its `catch_report_id` in lowercase if the item
+   is tied to exactly one catch record, and the literal `no-lot` otherwise.
+2. Remove duplicates.
+3. Sort in ASCII order.
+4. Join with commas, with no spaces.
+
+Then `lotId = SHA-256("gyotak:order-lots:v1:" ‖ manifest)`, with the text taken as
+UTF-8 and the digest written in lowercase hex. For an order in which no item is
+tied to exactly one catch record, the manifest is just `no-lot`:
+
+```bash
+printf '%s' 'gyotak:order-lots:v1:no-lot' | sha256sum
+# a93ba14f9607b2b775e966e55a1febae2280263406589a7922abd19cb6b7dd9d
+```
+
+That is the `lotId` on the first record above. On macOS use `shasum -a 256`.
+
+What the record holds, and what it does not:
+
+- The chain holds only the hash. The manifest lists catch record IDs and `no-lot`
+  only — no fish names and no weights — and it is not on the chain. GYOTAK
+  publishes it on the purchase's confirmation page
+  (`https://line-harness.gyotak.workers.dev/verify/purchase/?id=<purchase ID>`) and
+  in the `lot.manifest` field of the JSON at
+  `https://line-harness.gyotak.workers.dev/gyotak/verify-purchase?id=<purchase ID>`.
+  To check a record, hash the published manifest as above and compare it with the
+  `lotId` stored on the chain.
+- `no-lot` in a manifest stands for an item that is not tied to exactly one catch
+  record. A manifest with `no-lot` next to catch record IDs means some of the fish
+  in that order have no catch record; a manifest of `no-lot` alone means no item of
+  the order is tied to one.
+- The hash of a manifest of `no-lot` alone is a fixed value, the same for every such
+  order, so it contains no order number. A manifest that includes catch record IDs
+  gives a `lotId` specific to that set of catches.
+- A value other than 1 or 2 in `schema` has no reading defined here.
 
 ### Why two identifiers
 
